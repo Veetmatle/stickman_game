@@ -66,3 +66,24 @@ class Buildings:
 
     def handle_mouse_click(self, mouse_pos):
         pass
+
+    def dim_screen_smooth(self):
+        screen = py.display.get_surface()
+        overlay = py.Surface(screen.get_size())
+        overlay.set_alpha(0)
+
+        start_time = time.time()
+        duration = 1  # time of darkening
+        target_alpha = 150  # level of transparency
+
+        while time.time() - start_time < duration:
+            current_time = time.time() - start_time
+            alpha = int((current_time / duration) * target_alpha)
+            overlay.set_alpha(alpha)
+            screen.blit(overlay, (0, 0))
+            py.display.flip()
+            py.time.Clock().tick(60)
+
+        overlay.set_alpha(target_alpha)
+        screen.blit(overlay, (0, 0))
+        py.display.flip()

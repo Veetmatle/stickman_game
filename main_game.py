@@ -4,7 +4,6 @@ from stickman_player import StickMan
 from home_building import Home
 from university_building import University
 
-
 class Game:
     def __init__(self):
         py.init()
@@ -41,9 +40,9 @@ class Game:
 
     def handle_events(self):
         if self.home.entered:
-            self.home.handle_home_events()
+            self.home.handle_events()
         elif self.university.entered:
-            self.university.handle_uni_events()
+            self.university.handle_events()
         else:
             for event in py.event.get():
                 if event.type == py.QUIT:
@@ -51,10 +50,10 @@ class Game:
                 elif event.type == py.KEYDOWN:
                     if event.key == py.K_ESCAPE:
                         self.running = False
-                    elif event.key == py.K_e and self.home.able_to_enter and self.stickman.rect.colliderect(self.home.house_entry_rect):
-                        self.home.enter_the_home()
-                    elif event.key == py.K_e and self.university.able_to_enter and self.stickman.rect.colliderect(self.university.uni_entry_rect):
-                        self.university.enter_the_uni()
+                    elif event.key == py.K_e and self.home.able_to_enter and self.stickman.rect.colliderect(self.home.entry_rect):
+                        self.home.enter_building()
+                    elif event.key == py.K_e and self.university.able_to_enter and self.stickman.rect.colliderect(self.university.entry_rect):
+                        self.university.enter_building()
 
     def update(self):
         if not (self.home.entered or self.university.entered):
@@ -76,9 +75,9 @@ class Game:
             self.stickman.draw_properties()
 
             # Sprawdź, czy gracz jest w pobliżu wejścia do domku
-            if self.stickman.rect.colliderect(self.home.house_entry_rect):
+            if self.stickman.rect.colliderect(self.home.entry_rect):
                 self.home.draw_enter_message()
-            elif self.stickman.rect.colliderect(self.university.uni_entry_rect):
+            elif self.stickman.rect.colliderect(self.university.entry_rect):
                 self.university.draw_enter_message()
 
         elif self.home.entered:
@@ -87,7 +86,6 @@ class Game:
             self.university.update()
 
         py.display.flip()
-
 
 if __name__ == '__main__':
     game = Game()
