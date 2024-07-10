@@ -73,7 +73,7 @@ class Buildings:
         overlay.set_alpha(0)
 
         start_time = time.time()
-        duration = 1  # time of darkening
+        duration = 1
         target_alpha = 150  # level of transparency
 
         while time.time() - start_time < duration:

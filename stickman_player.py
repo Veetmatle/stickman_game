@@ -47,6 +47,8 @@ class StickMan(object):
         # clock
         self.clock = "12:00"
         self.last_time_update = time.time()
+        self.days = 1
+        self.last_bills_paid_day = 1
 
     def can_move(self, dx, dy):
         next_rect = self.rect.move(dx, dy)
@@ -118,6 +120,7 @@ class StickMan(object):
         self.draw_tired()
         self.draw_hunger()
         self.draw_clock()
+        self.draw_days()
 
     def draw_experience_bar(self):
         bar_width = 200
@@ -348,6 +351,9 @@ class StickMan(object):
                 minutes %= 60
             if hours >= 24:
                 hours %= 24
+                self.days += 1
+            if self.days - self.last_bills_paid_day >= 5: # tu zmiana
+                self.game.home.bills_paid = False
 
             self.clock = f"{hours:02d}:{minutes:02d}"
 
@@ -359,3 +365,10 @@ class StickMan(object):
         if self.hunger < 100:
             self.hunger = round(self.hunger + 0.2, 1)
 
+    def draw_days(self):
+        x = 50 # Position to the right of the clock
+        y = 110  # Slightly below the clock
+        font = py.font.SysFont(None, 24)
+        text = font.render(f'Day: {self.days}', True, (0, 0, 0))
+        text_rect = text.get_rect(center=(x, y))
+        self.game.screen.blit(text, text_rect)
