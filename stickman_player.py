@@ -33,7 +33,7 @@ class StickMan(object):
         self.money = 0
 
         # intellect, strength and popularity
-        self.intellect = 20
+        self.intellect = 1
         self.strength = 1
         self.popularity = 0
 

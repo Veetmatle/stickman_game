@@ -5,6 +5,7 @@ from home_building import Home
 from university_building import University
 from MCdonalds import MCDonald
 from hospital import Hospital
+from office import Office
 
 class Game:
     def __init__(self):
@@ -31,6 +32,8 @@ class Game:
         self.university = University(self)
         self.mcd = MCDonald(self)
         self.hospital = Hospital(self)
+        self.office = Office(self)
+
 
     def run(self):
         while self.running:
@@ -51,6 +54,8 @@ class Game:
             self.mcd.handle_events()
         elif self.hospital.entered:
             self.hospital.handle_events()
+        elif self.office.entered:
+            self.office.handle_events()
         else:
             for event in py.event.get():
                 if event.type == py.QUIT:
@@ -66,14 +71,17 @@ class Game:
                         self.mcd.enter_building()
                     elif event.key == py.K_e and self.hospital.able_to_enter and self.stickman.rect.colliderect(self.hospital.entry_rect):
                         self.hospital.enter_building()
+                    elif event.key == py.K_e and self.office.able_to_enter and self.stickman.rect.colliderect(self.office.entry_rect):
+                        self.office.enter_building()
 
     def update(self):
-        if not (self.home.entered or self.university.entered or self.mcd.entered or self.hospital.entered):
+        if not (self.home.entered or self.university.entered or self.mcd.entered or self.hospital.entered or self.office.entered):
             self.stickman.handle_keys()
         self.stickman.control_time_flow()
+        self.hospital.check_conditions()
 
     def draw(self):
-        if not (self.home.entered or self.university.entered or self.mcd.entered or self.hospital.entered):
+        if not (self.home.entered or self.university.entered or self.mcd.entered or self.hospital.entered or self.office.entered):
             # Ustal pozycję kamery
             camera_x = max(0, min(self.stickman.rect.centerx - self.window_size[0] // 2, self.map_size[0] - self.window_size[0]))
             camera_y = max(0, min(self.stickman.rect.centery - self.window_size[1] // 2, self.map_size[1] - self.window_size[1]))
@@ -95,6 +103,8 @@ class Game:
                 self.mcd.draw_enter_message()
             elif self.stickman.rect.colliderect(self.hospital.entry_rect):
                 self.hospital.draw_enter_message()
+            elif self.stickman.rect.colliderect(self.office.entry_rect):
+                self.office.draw_enter_message()
 
         elif self.home.entered:
             self.home.update()
@@ -104,6 +114,8 @@ class Game:
             self.mcd.update()
         elif self.hospital.entered:
             self.hospital.update()
+        elif self.office.entered:
+            self.office.update()
 
         py.display.flip()
 

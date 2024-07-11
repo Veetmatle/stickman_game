@@ -1,4 +1,5 @@
 import pygame as py
+import time
 from buildings import Buildings
 
 
@@ -9,6 +10,7 @@ class Hospital(Buildings):
         self.satisfy_hunger_button = py.Rect(380, 385, 247, 59)
         self.satisfy_tiredness_button = py.Rect(380, 470, 272, 61)
         self.exit_button = py.Rect(800, 475, 140, 57)
+        self.death_time = None
 
     def handle_buttons(self):
         mouse_pos = py.mouse.get_pos()
@@ -52,5 +54,27 @@ class Hospital(Buildings):
         elif self.exit_button.collidepoint(mouse_pos):
             self.exit_building()
 
+    def check_conditions(self):
+        if self.game.stickman.tiredness >= 100 or self.game.stickman.hunger >= 100:
+            if self.death_time is None:
+                self.death_time = time.time()
+            elif (time.time() - self.death_time) * 5 / 60 >= 1:  # 1 in-game hour
+                self.handle_death()
+
+    def handle_death(self):
+        self.dim_screen_smooth()
+        self.revive()
+        self.enter_building()
+        self.death_time = None
+
+    def revive(self):
+        self.able_to_enter = True
+        stickman = self.game.stickman
+        stickman.tiredness = 0
+        stickman.hunger = 0
+        stickman.level = 1
+        stickman.experience = 0
+        stickman.hp = 1
+        stickman.rect.center = (460, 600)  # Pozycja przed szpitalem
 
 

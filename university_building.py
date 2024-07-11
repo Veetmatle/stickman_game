@@ -32,22 +32,37 @@ class University(Buildings):
     def handle_mouse_click(self, mouse_pos):
         if self.go_gym_button.collidepoint(mouse_pos):
             if self.game.stickman.tiredness + 10 <= 100 and self.game.stickman.hunger + 10 <= 100:
-                self.game.home.dim_screen_smooth()
                 self.game.stickman.strength += 1
                 self.game.stickman.tiredness += 10
                 self.game.stickman.hunger += 10
+                hours, minutes = map(int, self.game.stickman.clock.split(':'))
+                hours += 1
+                if hours >= 24:
+                    hours %= 24
+                    self.game.stickman.days += 1
+                self.game.stickman.clock = f"{hours:02d}:{minutes:02d}"
         elif self.go_to_class_button.collidepoint(mouse_pos):
             if self.game.stickman.tiredness + 10 <= 100 and self.game.stickman.hunger + 10 <= 100 and self.game.stickman.money - 20 >= 0:
-                self.game.home.dim_screen_smooth()
                 self.game.stickman.intellect += 2
                 self.game.stickman.tiredness += 10
                 self.game.stickman.hunger += 10
                 self.game.stickman.money -= 20
+                hours, minutes = map(int, self.game.stickman.clock.split(':'))
+                hours += 1
+                if hours >= 24:
+                    hours %= 24
+                    self.game.stickman.days += 1
+                self.game.stickman.clock = f"{hours:02d}:{minutes:02d}"
         elif self.study_button.collidepoint(mouse_pos):
             if self.game.stickman.tiredness + 10 <= 100 and self.game.stickman.hunger + 5 <= 100:
-                self.game.home.dim_screen_smooth()
                 self.game.stickman.intellect += 1
                 self.game.stickman.tiredness += 10
                 self.game.stickman.hunger += 5
+                hours, minutes = map(int, self.game.stickman.clock.split(':'))
+                hours += 1
+                if hours >= 24:
+                    hours %= 24
+                    self.game.stickman.days += 1
+                self.game.stickman.clock = f"{hours:02d}:{minutes:02d}"
         elif self.exit_button.collidepoint(mouse_pos):
             self.exit_building()
