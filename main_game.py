@@ -6,6 +6,7 @@ from university_building import University
 from MCdonalds import MCDonald
 from hospital import Hospital
 from office import Office
+from castle import Castle
 
 class Game:
     def __init__(self):
@@ -33,6 +34,7 @@ class Game:
         self.mcd = MCDonald(self)
         self.hospital = Hospital(self)
         self.office = Office(self)
+        self.castle = Castle(self)
 
 
     def run(self):
@@ -56,6 +58,8 @@ class Game:
             self.hospital.handle_events()
         elif self.office.entered:
             self.office.handle_events()
+        elif self.castle.entered:
+            self.castle.handle_events()
         else:
             for event in py.event.get():
                 if event.type == py.QUIT:
@@ -73,15 +77,18 @@ class Game:
                         self.hospital.enter_building()
                     elif event.key == py.K_e and self.office.able_to_enter and self.stickman.rect.colliderect(self.office.entry_rect):
                         self.office.enter_building()
+                    elif event.key == py.K_e and self.castle.able_to_enter and self.stickman.rect.colliderect(self.castle.entry_rect):
+                        self.castle.enter_building()
 
     def update(self):
-        if not (self.home.entered or self.university.entered or self.mcd.entered or self.hospital.entered or self.office.entered):
+        if not (self.home.entered or self.university.entered or self.mcd.entered or self.hospital.entered or self.office.entered or self.castle.entered):
             self.stickman.handle_keys()
-        self.stickman.control_time_flow()
-        self.hospital.check_conditions()
+        if not self.castle.entered:
+            self.stickman.control_time_flow()
+            self.hospital.check_conditions()
 
     def draw(self):
-        if not (self.home.entered or self.university.entered or self.mcd.entered or self.hospital.entered or self.office.entered):
+        if not (self.home.entered or self.university.entered or self.mcd.entered or self.hospital.entered or self.office.entered or self.castle.entered):
             # Ustal pozycję kamery
             camera_x = max(0, min(self.stickman.rect.centerx - self.window_size[0] // 2, self.map_size[0] - self.window_size[0]))
             camera_y = max(0, min(self.stickman.rect.centery - self.window_size[1] // 2, self.map_size[1] - self.window_size[1]))
@@ -105,6 +112,8 @@ class Game:
                 self.hospital.draw_enter_message()
             elif self.stickman.rect.colliderect(self.office.entry_rect):
                 self.office.draw_enter_message()
+            elif self.stickman.rect.colliderect(self.castle.entry_rect):
+                self.castle.draw_enter_message()
 
         elif self.home.entered:
             self.home.update()
@@ -116,6 +125,8 @@ class Game:
             self.hospital.update()
         elif self.office.entered:
             self.office.update()
+        elif self.castle.entered:
+            self.castle.update()
 
         py.display.flip()
 
