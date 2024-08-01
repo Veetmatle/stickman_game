@@ -1,8 +1,7 @@
-from buildings import Buildings
 import pygame as py
 import random
 import time
-
+from buildings import Buildings
 
 class Castle(Buildings):
     def __init__(self, game):
@@ -36,15 +35,10 @@ class Castle(Buildings):
         self.attack_buttons = [
             py.Rect(100, 750, 200, 50),  # Attack 1
             py.Rect(400, 750, 200, 50),  # Attack 2
-            py.Rect(700, 750, 200, 50)  # Attack 3
+            py.Rect(700, 750, 200, 50)   # Attack 3
         ]
 
-        self.attack_text = None
-        self.damage_text = None
-        self.damage_pos = None
-        self.damage_time = 0
-        self.turn_text = None
-        self.turn_text_time = 0
+        self.damage_texts = []
 
     def update_castle_image(self):
         if self.big_joe_defeated:
@@ -61,11 +55,11 @@ class Castle(Buildings):
         previous_message = self.message
         self.message = ""
 
-        if self.fight_nade_button.collidepoint(mouse_pos):
+        if self.fight_nade_button.collidepoint(mouse_pos) and not self.nerdy_nade_defeated:
             self.message = "Click to fight Nade - lvl 8, str 40"
-        elif self.fight_jimmy_button.collidepoint(mouse_pos) and self.nerdy_nade_defeated:
+        elif self.fight_jimmy_button.collidepoint(mouse_pos) and self.nerdy_nade_defeated and not self.drunk_jimmy_defeated:
             self.message = "Click to fight Jimmy - lvl 16, str 80"
-        elif self.fight_joe_button.collidepoint(mouse_pos) and self.nerdy_nade_defeated and self.drunk_jimmy_defeated:
+        elif self.fight_joe_button.collidepoint(mouse_pos) and self.nerdy_nade_defeated and self.drunk_jimmy_defeated and not self.big_joe_defeated:
             self.message = "Click to fight Joe - lvl 25, str 120."
         else:
             self.message = "Click esc to exit"
@@ -87,6 +81,7 @@ class Castle(Buildings):
             else:
                 self.handle_buttons()
                 self.draw_message()
+        self.update_damage_texts()
 
     def draw_text_with_outline(self, text, pos, color, outline_color, background_color=None):
         font = py.font.SysFont(None, 30)
@@ -105,16 +100,39 @@ class Castle(Buildings):
 
         self.game.screen.blit(text_surf, text_rect)
 
+    def update_damage_texts(self):
+        current_time = time.time()
+        new_damage_texts = []
+        for text, pos, creation_time in self.damage_texts:
+            elapsed = current_time - creation_time
+            if elapsed < 2.0:
+                alpha = max(0, 255 - int((elapsed / 2.0) * 255))
+                self.draw_damage_text(text, pos, alpha)
+                new_damage_texts.append((text, pos, creation_time))
+        self.damage_texts = new_damage_texts
+
+    def draw_damage_text(self, text, pos, alpha):
+        font = py.font.SysFont(None, 30)
+        text_surf = font.render(text, True, (255, 0, 0))
+        text_surf.set_alpha(alpha)
+        text_rect = text_surf.get_rect(center=pos)
+
+        background_rect = text_rect.inflate(20, 10)
+        py.draw.rect(self.game.screen, (255, 255, 255), background_rect, border_radius=5)
+        py.draw.rect(self.game.screen, (0, 0, 0), background_rect, 2, border_radius=5)
+
+        self.game.screen.blit(text_surf, text_rect)
+
     def handle_mouse_click(self, mouse_pos):
         if self.in_fight:
             if self.player_turn:
                 self.handle_fight_click(mouse_pos)
         else:
-            if self.fight_nade_button.collidepoint(mouse_pos):
+            if self.fight_nade_button.collidepoint(mouse_pos) and not self.nerdy_nade_defeated:
                 self.fight('Nade')
-            elif self.fight_jimmy_button.collidepoint(mouse_pos) and self.nerdy_nade_defeated:
+            elif self.fight_jimmy_button.collidepoint(mouse_pos) and self.nerdy_nade_defeated and not self.drunk_jimmy_defeated:
                 self.fight('Jimmy')
-            elif self.fight_joe_button.collidepoint(mouse_pos) and self.nerdy_nade_defeated and self.drunk_jimmy_defeated:
+            elif self.fight_joe_button.collidepoint(mouse_pos) and self.nerdy_nade_defeated and self.drunk_jimmy_defeated and not self.big_joe_defeated:
                 self.fight('Joe')
 
     def fight(self, enemy):
@@ -145,28 +163,15 @@ class Castle(Buildings):
         self.draw_text_with_outline(f'Rage: {self.rage}', (self.game.window_size[0] - 150, 100), (255, 0, 0), (0, 0, 0), (255, 255, 255))
         self.draw_text_with_outline(f'{self.enemy} HP: {self.enemy_hp}', (150, 50), (255, 0, 0), (0, 0, 0), (255, 255, 255))
 
-        if self.player_turn:
-            self.turn_text = "Player's Turn"
-        else:
-            self.turn_text = f"{self.enemy}'s Turn"
-
-        self.draw_text_with_outline(self.turn_text, (self.game.window_size[0] // 2, 100), (255, 255, 255), (0, 0, 0))
-
         mouse_pos = py.mouse.get_pos()
+        attack_names = ['Normal Attack', 'Special Attack', 'Ultimate Attack']
+
         for i, button in enumerate(self.attack_buttons):
             if self.player_turn and button.collidepoint(mouse_pos):
-                py.draw.rect(self.game.screen, (0, 180, 0), button)  # Highlight button
+                py.draw.rect(self.game.screen, (128, 128, 128), button)
             else:
-                py.draw.rect(self.game.screen, (0, 128, 0), button)
-            self.draw_text_with_outline(f'Attack {i + 1}', button.center, (255, 255, 255), (0, 0, 0))
-
-        if self.attack_text:
-            self.draw_text_with_outline(self.attack_text, (self.game.window_size[0] // 2, self.game.window_size[1] // 2), (255, 255, 255), (0, 0, 0))
-
-        if self.damage_text and time.time() - self.damage_time < 1:
-            self.draw_text_with_outline(self.damage_text, self.damage_pos, (255, 0, 0), (0, 0, 0))
-        else:
-            self.damage_text = None
+                py.draw.rect(self.game.screen, (0, 0, 0), button)
+            self.draw_text_with_outline(attack_names[i], button.center, (255, 255, 255), (0, 0, 0))
 
         py.display.flip()
 
@@ -180,20 +185,20 @@ class Castle(Buildings):
             damage = self.attack
             self.attack_text = "Player uses Attack 1"
             self.rage += 20
-        elif attack_index == 1:
+        elif attack_index == 1 and self.rage - 20 >= 0:
             damage = self.special_attack
             self.attack_text = "Player uses Special Attack"
-            self.rage += 15
-        elif attack_index == 2:
+            self.rage -= 20
+        elif attack_index == 2 and self.rage - 60 >= 0:
             damage = self.ultimate
             self.attack_text = "Player uses Ultimate Attack"
-            self.rage += 30
+            self.rage -= 60
 
         self.enemy_hp -= damage
-        self.damage_text = f"-{damage}"
-        self.damage_pos = (150, 80)
-        self.damage_time = time.time()
+        self.add_damage_text(f"-{damage}", (self.game.window_size[0] // 2 - 150, 50))
         print(f"Dealt {damage} damage to {self.enemy}. Enemy HP is now {self.enemy_hp}")
+
+        py.display.flip()  # Upewnij się, że odświeżasz ekran natychmiast po zaktualizowaniu obrażeń
 
         if self.enemy_hp <= 0:
             self.end_fight(victory=True)
@@ -201,6 +206,9 @@ class Castle(Buildings):
             self.player_turn = False
             py.time.delay(1000)
             self.enemy_attack()
+
+    def add_damage_text(self, text, pos):
+        self.damage_texts.append((text, pos, time.time()))
 
     def enemy_attack(self):
         if random.random() < 0.5:
@@ -211,10 +219,10 @@ class Castle(Buildings):
             self.attack_text = f"{self.enemy} uses Special Attack"
 
         self.player_hp -= damage
-        self.damage_text = f"-{damage}"
-        self.damage_pos = (self.game.window_size[0] - 150, 80)
-        self.damage_time = time.time()
+        self.add_damage_text(f"-{damage}", (self.game.window_size[0] - 150, 150))
         print(f"{self.enemy} dealt {damage} damage to Player. Player HP is now {self.player_hp}")
+
+        py.display.flip()  # Upewnij się, że odświeżasz ekran natychmiast po zaktualizowaniu obrażeń
 
         if self.player_hp <= 0:
             self.end_fight(victory=False)
@@ -225,12 +233,16 @@ class Castle(Buildings):
     def end_fight(self, victory):
         self.in_fight = False
         if victory:
+            self.game.stickman.level += 5
             print(f"Player defeated {self.enemy}")
             if self.enemy == 'Nade':
+                self.game.stickman.money += 100
                 self.nerdy_nade_defeated = True
             elif self.enemy == 'Jimmy':
+                self.game.stickman.money += 200
                 self.drunk_jimmy_defeated = True
             elif self.enemy == 'Joe':
+                self.game.stickman.money += 500
                 self.big_joe_defeated = True
         else:
             print("Player was defeated")
