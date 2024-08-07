@@ -5,7 +5,7 @@ import time
 
 class University(Buildings):
     def __init__(self, game):
-        super().__init__(game, py.Rect(1571, 675, 33, 29), 'University.png')
+        super().__init__(game, py.Rect(1571, 675, 33, 29), 'images/University.png')
         self.study_button = py.Rect(346, 191, 251, 76)
         self.go_to_class_button = py.Rect(346, 295, 252, 80)
         self.go_gym_button = py.Rect(673, 188, 223, 79)

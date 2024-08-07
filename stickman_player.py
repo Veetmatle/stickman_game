@@ -16,10 +16,10 @@ class StickMan(object):
         self.x = (self.window_size[0] - self.size) // 2
         self.y = (self.window_size[1] - self.size) // 2
         self.images = {
-            'up': py.image.load('resized_player_no_bg.png').convert_alpha(),
-            'right': py.image.load('resized_player_no_right.png').convert_alpha(),
-            'down': py.image.load('resized_player_no_down.png').convert_alpha(),
-            'left': py.image.load('resized_player_no_left.png').convert_alpha()
+            'up': py.image.load('images/resized_player_no_bg.png').convert_alpha(),
+            'right': py.image.load('images/resized_player_no_right.png').convert_alpha(),
+            'down': py.image.load('images/resized_player_no_down.png').convert_alpha(),
+            'left': py.image.load('images/resized_player_no_left.png').convert_alpha()
         }
         # Additional directional images
         self.images['up_right'] = py.transform.rotate(self.images['up'], -45)
@@ -33,9 +33,9 @@ class StickMan(object):
 
         # Experience, level, and attributes
         self.experience = 0
-        self.level = 1
+        self.level = 12
         self.hp = 1000
-        self.money = 1000
+        self.money = 10000
         self.intellect = 1
         self.strength = 1
         self.popularity = 1

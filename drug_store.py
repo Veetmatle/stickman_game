@@ -4,7 +4,7 @@ from buildings import Buildings
 
 class DrugStore(Buildings):
     def __init__(self, game):
-        super().__init__(game, py.Rect(1134, 1110, 24, 74), "drug_store.jpg")
+        super().__init__(game, py.Rect(1134, 1110, 24, 74), "images/drug_store.jpg")
         self.buy_cigarettes_button = py.Rect(290, 123, 262, 55)
         self.buy_vodka_button = py.Rect(284, 180, 271, 51)
         self.buy_drugs_button = py.Rect(569, 115, 265, 119)

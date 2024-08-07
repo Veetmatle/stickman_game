@@ -5,7 +5,7 @@ from buildings import Buildings
 
 class Castle(Buildings):
     def __init__(self, game):
-        super().__init__(game, py.Rect(844, 197, 15, 42), image_path='Nerdy_Nade_castle.png')
+        super().__init__(game, py.Rect(844, 197, 15, 42), image_path='images/Nerdy_Nade_castle.png')
         self.nerdy_nade_defeated = False
         self.drunk_jimmy_defeated = False
         self.big_joe_defeated = False
@@ -42,13 +42,13 @@ class Castle(Buildings):
 
     def update_castle_image(self):
         if self.big_joe_defeated:
-            self.image = py.image.load('3_en_unlocked_castle.png').convert()
+            self.image = py.image.load('images/3_en_unlocked_castle.png').convert()
         elif self.drunk_jimmy_defeated:
-            self.image = py.image.load('3_en_unlocked_castle.png').convert()
+            self.image = py.image.load('images/3_en_unlocked_castle.png').convert()
         elif self.nerdy_nade_defeated:
-            self.image = py.image.load('2_en_unlocked_castle.png').convert()
+            self.image = py.image.load('images/2_en_unlocked_castle.png').convert()
         else:
-            self.image = py.image.load('Nerdy_Nade_castle.png').convert()
+            self.image = py.image.load('images/Nerdy_Nade_castle.png').convert()
 
     def handle_buttons(self):
         mouse_pos = py.mouse.get_pos()
@@ -183,22 +183,24 @@ class Castle(Buildings):
     def execute_attack(self, attack_index):
         if attack_index == 0:
             damage = self.attack
-            self.attack_text = "Player uses Attack 1"
+            self.attack_text = "Player uses Normal Attack"
             self.rage += 20
-        elif attack_index == 1 and self.rage - 20 >= 0:
+        elif attack_index == 1 and self.rage >= 20:
             damage = self.special_attack
             self.attack_text = "Player uses Special Attack"
             self.rage -= 20
-        elif attack_index == 2 and self.rage - 60 >= 0:
+        elif attack_index == 2 and self.rage >= 60:
             damage = self.ultimate
             self.attack_text = "Player uses Ultimate Attack"
             self.rage -= 60
+        else:
+            return  # Nie wykonuj ataku, jeśli nie ma wystarczająco dużo rage
 
         self.enemy_hp -= damage
         self.add_damage_text(f"-{damage}", (self.game.window_size[0] // 2 - 150, 50))
         print(f"Dealt {damage} damage to {self.enemy}. Enemy HP is now {self.enemy_hp}")
 
-        py.display.flip()  # Upewnij się, że odświeżasz ekran natychmiast po zaktualizowaniu obrażeń
+        py.display.flip()
 
         if self.enemy_hp <= 0:
             self.end_fight(victory=True)
@@ -222,7 +224,7 @@ class Castle(Buildings):
         self.add_damage_text(f"-{damage}", (self.game.window_size[0] - 150, 150))
         print(f"{self.enemy} dealt {damage} damage to Player. Player HP is now {self.player_hp}")
 
-        py.display.flip()  # Upewnij się, że odświeżasz ekran natychmiast po zaktualizowaniu obrażeń
+        py.display.flip()
 
         if self.player_hp <= 0:
             self.end_fight(victory=False)

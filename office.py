@@ -4,7 +4,7 @@ from buildings import Buildings
 
 class Office(Buildings):
     def __init__(self, game):
-        super().__init__(game, py.Rect(1132, 513, 24, 63), 'biuro.png')
+        super().__init__(game, py.Rect(1132, 513, 24, 63), 'images/biuro.png')
         self.work_intern_button = py.Rect(270, 394, 317, 64)
         self.work_senior_button = py.Rect(272, 473, 318, 73)
         self.work_manager_button = py.Rect(270, 558, 342, 74)

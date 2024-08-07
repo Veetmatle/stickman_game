@@ -5,7 +5,7 @@ from buildings import Buildings
 
 class MCDonald(Buildings):
     def __init__(self, game):
-        super().__init__(game, py.Rect(835, 679, 25, 55), 'mcd.png')
+        super().__init__(game, py.Rect(835, 679, 25, 55), 'images/mcd.png')
         self.milkshake_button = py.Rect(346, 207, 325, 76)
         self.fries_button = py.Rect(343, 307, 288, 69)
         self.cheeseburger_button = py.Rect(345, 405, 226, 70)

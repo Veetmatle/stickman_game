@@ -5,7 +5,7 @@ import time
 
 class Home(Buildings):
     def __init__(self, game):
-        super().__init__(game, py.Rect(324, 267, 51, 90), 'dom_stickman.png')
+        super().__init__(game, py.Rect(324, 267, 51, 90), 'images/dom_stickman.png')
         self.message_button = py.Rect(358, 404, 286, 79)
         self.sleep_button = py.Rect(361, 516, 151, 80)
         self.leave_button = py.Rect(792, 514, 160, 80)

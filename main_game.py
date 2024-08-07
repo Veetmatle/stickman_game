@@ -10,6 +10,8 @@ from castle import Castle
 from drug_store import DrugStore
 from weapon_shop import WeaponShop
 from bank import Bank
+from game_end_bar import GameEndBar
+from casino import Casino
 
 class Game:
     def __init__(self):
@@ -27,10 +29,10 @@ class Game:
         self.running = True
 
         # Load background image
-        self.background = py.image.load('game_background.png').convert()
+        self.background = py.image.load('images/game_background.png').convert()
 
         # Load collision mask
-        collision_mask_image = py.image.load('maska.png').convert()
+        collision_mask_image = py.image.load('images/maska.png').convert()
         self.collision_mask = py.mask.from_threshold(collision_mask_image, (255, 255, 255), (1, 1, 1, 255))
 
         # Initialize StickMan (player character)
@@ -46,6 +48,10 @@ class Game:
         self.drug_store = DrugStore(self)
         self.weapon_shop = WeaponShop(self)
         self.bank = Bank(self)
+        self.game_end_bar = GameEndBar(self)
+        self.casino = Casino(self)
+
+        #initialize NPC
 
     def run(self):
         """
@@ -86,6 +92,10 @@ class Game:
             self.weapon_shop.handle_events()
         elif self.bank.entered:
             self.bank.handle_events()
+        elif self.game_end_bar.entered:
+            self.game_end_bar.handle_events()
+        elif self.casino.entered:
+            self.casino.handle_events()
         else:
             for event in py.event.get():
                 if event.type == py.QUIT:
@@ -111,7 +121,10 @@ class Game:
                         self.weapon_shop.enter_building()
                     elif event.key == py.K_e and self.bank.able_to_enter and self.stickman.rect.colliderect(self.bank.entry_rect):
                         self.bank.enter_building()
-
+                    elif event.key == py.K_e and self.game_end_bar.able_to_enter and self.stickman.level >= 30 and self.stickman.rect.colliderect(self.game_end_bar.entry_rect):
+                        self.game_end_bar.enter_building()
+                    elif event.key == py.K_e and self.casino.able_to_enter and self.stickman.rect.colliderect(self.casino.entry_rect) and self.stickman.level >= 10:
+                        self.casino.enter_building()
     def update(self):
         """
         Updates the game state. If the player is not inside any building, it updates
@@ -119,9 +132,9 @@ class Game:
         in the game, such as those related to the hospital.
         """
         if not (self.home.entered or self.university.entered or self.mcd.entered or self.hospital.entered or self.office.entered
-                or self.castle.entered or self.drug_store.entered or self.weapon_shop.entered or self.bank.entered):
+                or self.castle.entered or self.drug_store.entered or self.weapon_shop.entered or self.bank.entered or self.game_end_bar.entered or self.casino.entered):
             self.stickman.handle_keys()
-        if not self.castle.entered:
+        if not self.castle.entered or not self.casino.entered:
             self.stickman.control_time_flow()
             self.hospital.check_conditions()
 
@@ -134,7 +147,7 @@ class Game:
         """
         if not (self.home.entered or self.university.entered or self.mcd.entered or self.hospital.entered
                 or self.office.entered or self.castle.entered or self.drug_store.entered or self.weapon_shop.entered
-        or self.bank.entered):
+        or self.bank.entered or self.game_end_bar.entered or self.casino.entered):
             # Determine camera position
             camera_x = max(0, min(self.stickman.rect.centerx - self.window_size[0] // 2, self.map_size[0] - self.window_size[0]))
             camera_y = max(0, min(self.stickman.rect.centery - self.window_size[1] // 2, self.map_size[1] - self.window_size[1]))
@@ -166,6 +179,10 @@ class Game:
                 self.weapon_shop.draw_enter_message()
             elif self.stickman.rect.colliderect(self.bank.entry_rect):
                 self.bank.draw_enter_message()
+            elif self.stickman.rect.colliderect(self.game_end_bar.entry_rect):
+                self.game_end_bar.draw_enter_message()
+            elif self.stickman.rect.colliderect(self.casino.entry_rect):
+                self.casino.draw_enter_message()
 
         elif self.home.entered:
             self.home.update()
@@ -185,8 +202,27 @@ class Game:
             self.weapon_shop.update()
         elif self.bank.entered:
             self.bank.update()
+        elif self.game_end_bar.entered:
+            self.game_end_bar.update()
+        elif self.casino.entered:
+            self.casino.update()
 
         py.display.flip()
+
+    def pause_game(self):
+        """
+        Pauses the main game by stopping the game loop and disabling StickMan's actions.
+        """
+        self.running = False
+        self.stickman.active = False
+
+    def resume_game(self):
+        """
+        Resumes the main game after the BlackJack game is finished.
+        """
+        self.running = True
+        self.stickman.active = True
+        self.run()
 
 if __name__ == '__main__':
     game = Game()

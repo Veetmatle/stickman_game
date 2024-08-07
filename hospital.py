@@ -5,7 +5,7 @@ from buildings import Buildings
 
 class Hospital(Buildings):
     def __init__(self, game):
-        super().__init__(game, py.Rect(445, 622, 50, 30), 'hospital.png')
+        super().__init__(game, py.Rect(445, 622, 50, 30), 'images/hospital.png')
         self.heal_yourself_button = py.Rect(375, 300, 293, 56)
         self.satisfy_hunger_button = py.Rect(380, 385, 247, 59)
         self.satisfy_tiredness_button = py.Rect(380, 470, 272, 61)

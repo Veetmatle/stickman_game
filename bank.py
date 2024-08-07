@@ -4,7 +4,7 @@ from buildings import Buildings
 
 class Bank(Buildings):
     def __init__(self, game):
-        super().__init__(game, py.Rect(1134, 307, 21, 48), "bank.jpg")
+        super().__init__(game, py.Rect(1134, 307, 21, 48), "images/bank.jpg")
         self.work_button = py.Rect(63, 479, 261, 264)
         self.rob_button = py.Rect(375, 480, 254, 266)
         self.take_loan_button = py.Rect(684, 480, 266, 276)
