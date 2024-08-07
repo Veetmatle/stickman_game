@@ -1,17 +1,17 @@
 import sys
 import pygame as py
 from stickman_player import StickMan
-from home_building import Home
-from university_building import University
-from MCdonalds import MCDonald
-from hospital import Hospital
-from office import Office
-from castle import Castle
-from drug_store import DrugStore
-from weapon_shop import WeaponShop
-from bank import Bank
-from game_end_bar import GameEndBar
-from casino import Casino
+from BUILDINGS.home_building import Home
+from BUILDINGS.university_building import University
+from BUILDINGS.MCdonalds import MCDonald
+from BUILDINGS.hospital import Hospital
+from BUILDINGS.office import Office
+from BUILDINGS.castle import Castle
+from BUILDINGS.drug_store import DrugStore
+from BUILDINGS.weapon_shop import WeaponShop
+from BUILDINGS.bank import Bank
+from BUILDINGS.game_end_bar import GameEndBar
+from BUILDINGS.casino import Casino
 
 class Game:
     def __init__(self):
@@ -38,7 +38,7 @@ class Game:
         # Initialize StickMan (player character)
         self.stickman = StickMan(self)
 
-        # Initialize buildings
+        # Initialize BUILDINGS
         self.home = Home(self)
         self.university = University(self)
         self.mcd = MCDonald(self)
@@ -72,7 +72,7 @@ class Game:
         """
         Handles user input and game events. Checks if the player has entered a
         building and handles specific events for that building, otherwise processes
-        general game events such as quitting the game or interacting with buildings.
+        general game events such as quitting the game or interacting with BUILDINGS.
         """
         if self.home.entered:
             self.home.handle_events()
@@ -141,7 +141,7 @@ class Game:
     def draw(self):
         """
         Draws the current game frame. Depending on the player's location, it either
-        draws the main map with the player and buildings or updates the display within
+        draws the main map with the player and BUILDINGS or updates the display within
         a specific building. It also handles camera movement and UI elements such as
         experience bars and health points.
         """

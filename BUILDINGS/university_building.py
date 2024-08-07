@@ -1,4 +1,4 @@
-from buildings import Buildings
+from BUILDINGS.buildings import Buildings
 import pygame as py
 import time
 

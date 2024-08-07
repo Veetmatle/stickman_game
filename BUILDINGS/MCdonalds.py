@@ -1,6 +1,6 @@
 import pygame as py
 import time
-from buildings import Buildings
+from BUILDINGS.buildings import Buildings
 
 
 class MCDonald(Buildings):

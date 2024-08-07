@@ -1,5 +1,5 @@
 import pygame as py
-from buildings import Buildings
+from BUILDINGS.buildings import Buildings
 
 
 class Bank(Buildings):

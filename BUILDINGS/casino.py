@@ -1,7 +1,7 @@
 import pygame as py
 import random
 import copy
-from buildings import Buildings
+from BUILDINGS.buildings import Buildings
 import sys
 from blackjack_game import BlackjackGame
 

@@ -1,7 +1,7 @@
 import pygame as py
 import random
 import time
-from buildings import Buildings
+from BUILDINGS.buildings import Buildings
 
 class Castle(Buildings):
     def __init__(self, game):
