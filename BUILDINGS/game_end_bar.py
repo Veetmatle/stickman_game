@@ -6,7 +6,7 @@ class GameEndBar(Buildings):
     def __init__(self, game):
         super().__init__(game, py.Rect(804, 882, 63, 61), "images/game_end_bar.jpg")
         self.end_game_button = py.Rect(320, 85, 359, 304)
-        self.required_level = 30  # Required level to enter this building
+        self.required_level = 30
 
     def draw_enter_message(self):
         """
@@ -43,6 +43,6 @@ class GameEndBar(Buildings):
     def handle_mouse_click(self, mouse_pos):
         if self.game.stickman.level >= self.required_level:
             if self.end_game_button.collidepoint(mouse_pos):
-                self.game.home.dim_screen_smooth()  # Perform screen dimming effect
-                py.time.delay(2000)  # Optional: delay for 2 seconds to show the completed screen
-                self.game.running = False  # Stop the game loop
+                self.game.home.dim_screen_smooth()
+                from main_menu import main_menu
+                main_menu()

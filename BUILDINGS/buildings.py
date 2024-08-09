@@ -1,6 +1,7 @@
 import pygame as py
 import time
 
+
 class Buildings:
     def __init__(self, game, entry_rect, image_path):
         """
@@ -115,7 +116,7 @@ class Buildings:
         overlay.set_alpha(0)
 
         start_time = time.time()
-        duration = 1  # Duration of the dimming effect in seconds
+        duration = 1
         target_alpha = 150  # Level of transparency for the dim effect
 
         while time.time() - start_time < duration:

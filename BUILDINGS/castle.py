@@ -3,6 +3,7 @@ import random
 import time
 from BUILDINGS.buildings import Buildings
 
+
 class Castle(Buildings):
     def __init__(self, game):
         super().__init__(game, py.Rect(844, 197, 15, 42), image_path='images/Nerdy_Nade_castle.png')
@@ -19,9 +20,6 @@ class Castle(Buildings):
 
         # player stats
         self.player_hp = 1000
-        self.attack = 150
-        self.special_attack = 400
-        self.ultimate = 700
         self.rage = 0
         self.energy = 100
         self.player_turn = True
@@ -35,7 +33,7 @@ class Castle(Buildings):
         self.attack_buttons = [
             py.Rect(100, 750, 200, 50),  # Attack 1
             py.Rect(400, 750, 200, 50),  # Attack 2
-            py.Rect(700, 750, 200, 50)   # Attack 3
+            py.Rect(700, 750, 200, 50)  # Attack 3
         ]
 
         self.damage_texts = []
@@ -57,9 +55,11 @@ class Castle(Buildings):
 
         if self.fight_nade_button.collidepoint(mouse_pos) and not self.nerdy_nade_defeated:
             self.message = "Click to fight Nade - lvl 8, str 40"
-        elif self.fight_jimmy_button.collidepoint(mouse_pos) and self.nerdy_nade_defeated and not self.drunk_jimmy_defeated:
+        elif self.fight_jimmy_button.collidepoint(
+                mouse_pos) and self.nerdy_nade_defeated and not self.drunk_jimmy_defeated:
             self.message = "Click to fight Jimmy - lvl 16, str 80"
-        elif self.fight_joe_button.collidepoint(mouse_pos) and self.nerdy_nade_defeated and self.drunk_jimmy_defeated and not self.big_joe_defeated:
+        elif self.fight_joe_button.collidepoint(
+                mouse_pos) and self.nerdy_nade_defeated and self.drunk_jimmy_defeated and not self.big_joe_defeated:
             self.message = "Click to fight Joe - lvl 25, str 120."
         else:
             self.message = "Click esc to exit"
@@ -71,7 +71,8 @@ class Castle(Buildings):
         image_scaled = py.transform.scale(self.image, self.game.window_size)
         self.game.screen.blit(image_scaled, (0, 0))
         if self.message:
-            self.draw_text_with_outline(self.message, (self.game.window_size[0] // 2, self.game.window_size[1] - 30), (255, 0, 0), (0, 0, 0))
+            self.draw_text_with_outline(self.message, (self.game.window_size[0] // 2, self.game.window_size[1] - 30),
+                                        (255, 0, 0), (0, 0, 0))
         py.display.flip()
 
     def update(self):
@@ -130,9 +131,11 @@ class Castle(Buildings):
         else:
             if self.fight_nade_button.collidepoint(mouse_pos) and not self.nerdy_nade_defeated:
                 self.fight('Nade')
-            elif self.fight_jimmy_button.collidepoint(mouse_pos) and self.nerdy_nade_defeated and not self.drunk_jimmy_defeated:
+            elif self.fight_jimmy_button.collidepoint(
+                    mouse_pos) and self.nerdy_nade_defeated and not self.drunk_jimmy_defeated:
                 self.fight('Jimmy')
-            elif self.fight_joe_button.collidepoint(mouse_pos) and self.nerdy_nade_defeated and self.drunk_jimmy_defeated and not self.big_joe_defeated:
+            elif self.fight_joe_button.collidepoint(
+                    mouse_pos) and self.nerdy_nade_defeated and self.drunk_jimmy_defeated and not self.big_joe_defeated:
                 self.fight('Joe')
 
     def fight(self, enemy):
@@ -142,26 +145,29 @@ class Castle(Buildings):
             self.enemy_hp = self.nade_stats['hp']
             self.enemy_ad = self.nade_stats['ad']
             self.enemy_special_attack = self.nade_stats['special_attack']
-            self.image = py.image.load('fight_nade.jpg').convert()
+            self.image = py.image.load('images/fight_nade.jpg').convert()
         elif enemy == 'Jimmy':
             self.enemy_hp = self.jimmy_stats['hp']
             self.enemy_ad = self.jimmy_stats['ad']
             self.enemy_special_attack = self.jimmy_stats['special_attack']
-            self.image = py.image.load('fight_jimmy.jpg').convert()
+            self.image = py.image.load('images/fight_jimmy.jpg').convert()
         elif enemy == 'Joe':
             self.enemy_hp = self.joe_stats['hp']
             self.enemy_ad = self.joe_stats['ad']
             self.enemy_special_attack = self.joe_stats['special_attack']
-            self.image = py.image.load('fight_joe.jpg').convert()
+            self.image = py.image.load('images/fight_joe.jpg').convert()
         print(f"Started fight with {self.enemy}")
 
     def draw_fight(self):
         image_scaled = py.transform.scale(self.image, self.game.window_size)
         self.game.screen.blit(image_scaled, (0, 0))
 
-        self.draw_text_with_outline(f'Player HP: {self.player_hp}', (self.game.window_size[0] - 150, 50), (255, 0, 0), (0, 0, 0), (255, 255, 255))
-        self.draw_text_with_outline(f'Rage: {self.rage}', (self.game.window_size[0] - 150, 100), (255, 0, 0), (0, 0, 0), (255, 255, 255))
-        self.draw_text_with_outline(f'{self.enemy} HP: {self.enemy_hp}', (150, 50), (255, 0, 0), (0, 0, 0), (255, 255, 255))
+        self.draw_text_with_outline(f'Player HP: {self.player_hp}', (self.game.window_size[0] - 150, 50), (255, 0, 0),
+                                    (0, 0, 0), (255, 255, 255))
+        self.draw_text_with_outline(f'Rage: {self.rage}', (self.game.window_size[0] - 150, 100), (255, 0, 0), (0, 0, 0),
+                                    (255, 255, 255))
+        self.draw_text_with_outline(f'{self.enemy} HP: {self.enemy_hp}', (150, 50), (255, 0, 0), (0, 0, 0),
+                                    (255, 255, 255))
 
         mouse_pos = py.mouse.get_pos()
         attack_names = ['Normal Attack', 'Special Attack', 'Ultimate Attack']
@@ -181,6 +187,10 @@ class Castle(Buildings):
                 self.execute_attack(i)
 
     def execute_attack(self, attack_index):
+        self.attack = self.game.stickman.strength
+        self.special_attack = self.game.stickman.strength * 2
+        self.ultimate = self.game.stickman.strength * 3
+
         if attack_index == 0:
             damage = self.attack
             self.attack_text = "Player uses Normal Attack"
@@ -194,7 +204,7 @@ class Castle(Buildings):
             self.attack_text = "Player uses Ultimate Attack"
             self.rage -= 60
         else:
-            return  # Nie wykonuj ataku, jeśli nie ma wystarczająco dużo rage
+            return
 
         self.enemy_hp -= damage
         self.add_damage_text(f"-{damage}", (self.game.window_size[0] // 2 - 150, 50))
@@ -238,12 +248,15 @@ class Castle(Buildings):
             self.game.stickman.level += 5
             print(f"Player defeated {self.enemy}")
             if self.enemy == 'Nade':
+                self.game.stickman.level += 1
                 self.game.stickman.money += 100
                 self.nerdy_nade_defeated = True
             elif self.enemy == 'Jimmy':
+                self.game.stickman.level += 2
                 self.game.stickman.money += 200
                 self.drunk_jimmy_defeated = True
             elif self.enemy == 'Joe':
+                self.game.stickman.level += 3
                 self.game.stickman.money += 500
                 self.big_joe_defeated = True
         else:

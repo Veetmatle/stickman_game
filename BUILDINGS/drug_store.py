@@ -61,7 +61,7 @@ class DrugStore(Buildings):
             self.game.stickman.money -= 200
         elif self.buy_drugs_button.collidepoint(mouse_pos) and self.game.stickman.money >= 1000 and not self.drugs_bought:
             self.drugs_bought = True
-            self.game.stickman.update_experience(800)
+            self.game.stickman.level += 1
             self.game.stickman.money -= 1000
         elif self.exit_button.collidepoint(mouse_pos):
             self.exit_building()

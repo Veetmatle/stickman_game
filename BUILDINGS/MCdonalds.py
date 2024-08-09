@@ -73,7 +73,8 @@ class MCDonald(Buildings):
                 self.game.stickman.money += 6
                 self.game.stickman.tiredness += 10
                 self.game.stickman.hunger += 4
-                self.game.stickman.update_experience(50)
+                if self.game.stickman.level <= 15:
+                    self.game.stickman.update_experience(50)
                 hours, minutes = map(int, self.game.stickman.clock.split(':'))
                 hours += 1
                 if hours >= 24:

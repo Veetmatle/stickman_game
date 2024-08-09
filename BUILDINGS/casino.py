@@ -48,6 +48,7 @@ class Casino(Buildings):
                 self.game.pause_game()
                 result = self.blackjack_game.play(stake, self.game.stickman)
                 if result == 'win':
+                    self.game.stickman.update_experience(100)
                     self.game.stickman.money += stake * 2
                 elif result == 'lose':
                     self.game.stickman.money -= stake

@@ -34,7 +34,8 @@ class Office(Buildings):
                 self.game.stickman.money += 15
                 self.game.stickman.tiredness += 10
                 self.game.stickman.hunger += 6
-                self.game.stickman.update_experience(75)
+                if self.game.stickman.level <= 15:
+                    self.game.stickman.update_experience(75)
                 hours, minutes = map(int, self.game.stickman.clock.split(':'))
                 hours += 1
                 if hours >= 24:
@@ -42,13 +43,13 @@ class Office(Buildings):
                     self.game.stickman.days += 1
                 self.game.stickman.clock = f"{hours:02d}:{minutes:02d}"
 
-
         elif self.work_senior_button.collidepoint(mouse_pos):
             if self.game.stickman.intellect >= 70 and self.game.stickman.tiredness + 10 <= 100 and self.game.stickman.hunger + 6 <= 100:
                 self.game.stickman.money += 25
                 self.game.stickman.tiredness += 10
                 self.game.stickman.hunger += 6
-                self.game.stickman.update_experience(100)
+                if self.game.stickman.level <= 18:
+                    self.game.stickman.update_experience(100)
                 hours, minutes = map(int, self.game.stickman.clock.split(':'))
                 hours += 1
                 if hours >= 24:
@@ -61,7 +62,8 @@ class Office(Buildings):
                 self.game.stickman.money += 50
                 self.game.stickman.tiredness += 10
                 self.game.stickman.hunger += 6
-                self.game.stickman.update_experience(150)
+                if self.game.stickman.level <= 22:
+                    self.game.stickman.update_experience(150)
                 hours, minutes = map(int, self.game.stickman.clock.split(':'))
                 hours += 1
                 if hours >= 24:

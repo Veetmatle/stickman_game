@@ -82,7 +82,7 @@ class WeaponShop(Buildings):
         elif self.buy_bazooka_button.collidepoint(mouse_pos) and not self.bazooka_bought and self.game.stickman.money >= 1000:
             self.game.stickman.money -= 1000
             self.bazooka_bought = True
-            self.game.stickman.strength += 150
+            self.game.stickman.strength += 60
             self.game.stickman.update_experience(500)
 
         elif self.exit_button.collidepoint(mouse_pos):

@@ -58,7 +58,7 @@ class Hospital(Buildings):
         if self.game.stickman.tiredness >= 100 or self.game.stickman.hunger >= 100:
             if self.death_time is None:
                 self.death_time = time.time()
-            elif (time.time() - self.death_time) * 5 / 60 >= 1:  # 1 in-game hour
+            elif (time.time() - self.death_time) * 5 / 60 >= 1:
                 self.handle_death()
 
     def handle_death(self):
@@ -75,6 +75,6 @@ class Hospital(Buildings):
         stickman.level = 1
         stickman.experience = 0
         stickman.hp = 1
-        stickman.rect.center = (460, 600)  # Pozycja przed szpitalem
+        stickman.rect.center = (460, 600)
 
 

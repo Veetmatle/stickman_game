@@ -14,7 +14,7 @@ from BUILDINGS.game_end_bar import GameEndBar
 from BUILDINGS.casino import Casino
 
 class Game:
-    def __init__(self):
+    def __init__(self, strength=1, intellect=1, popularity=1):
         """
         Initializes the Game class, setting up the basic game parameters such as
         window size, map size, background, collision mask, and initializes the
@@ -36,7 +36,7 @@ class Game:
         self.collision_mask = py.mask.from_threshold(collision_mask_image, (255, 255, 255), (1, 1, 1, 255))
 
         # Initialize StickMan (player character)
-        self.stickman = StickMan(self)
+        self.stickman = StickMan(self, strength, intellect, popularity)
 
         # Initialize BUILDINGS
         self.home = Home(self)
@@ -51,7 +51,20 @@ class Game:
         self.game_end_bar = GameEndBar(self)
         self.casino = Casino(self)
 
-        #initialize NPC
+        # Add BUILDINGS to a list
+        self.buildings = [
+            self.home,
+            self.university,
+            self.mcd,
+            self.hospital,
+            self.office,
+            self.castle,
+            self.drug_store,
+            self.weapon_shop,
+            self.bank,
+            self.game_end_bar,
+            self.casino
+        ]
 
     def run(self):
         """
@@ -74,67 +87,34 @@ class Game:
         building and handles specific events for that building, otherwise processes
         general game events such as quitting the game or interacting with BUILDINGS.
         """
-        if self.home.entered:
-            self.home.handle_events()
-        elif self.university.entered:
-            self.university.handle_events()
-        elif self.mcd.entered:
-            self.mcd.handle_events()
-        elif self.hospital.entered:
-            self.hospital.handle_events()
-        elif self.office.entered:
-            self.office.handle_events()
-        elif self.castle.entered:
-            self.castle.handle_events()
-        elif self.drug_store.entered:
-            self.drug_store.handle_events()
-        elif self.weapon_shop.entered:
-            self.weapon_shop.handle_events()
-        elif self.bank.entered:
-            self.bank.handle_events()
-        elif self.game_end_bar.entered:
-            self.game_end_bar.handle_events()
-        elif self.casino.entered:
-            self.casino.handle_events()
-        else:
-            for event in py.event.get():
-                if event.type == py.QUIT:
+        for building in self.buildings:
+            if building.entered:
+                building.handle_events()
+                return
+
+        for event in py.event.get():
+            if event.type == py.QUIT:
+                self.running = False
+            elif event.type == py.KEYDOWN:
+                if event.key == py.K_ESCAPE:
                     self.running = False
-                elif event.type == py.KEYDOWN:
-                    if event.key == py.K_ESCAPE:
-                        self.running = False
-                    elif event.key == py.K_e and self.home.able_to_enter and self.stickman.rect.colliderect(self.home.entry_rect):
-                        self.home.enter_building()
-                    elif event.key == py.K_e and self.university.able_to_enter and self.stickman.rect.colliderect(self.university.entry_rect):
-                        self.university.enter_building()
-                    elif event.key == py.K_e and self.mcd.able_to_enter and self.stickman.rect.colliderect(self.mcd.entry_rect):
-                        self.mcd.enter_building()
-                    elif event.key == py.K_e and self.hospital.able_to_enter and self.stickman.rect.colliderect(self.hospital.entry_rect):
-                        self.hospital.enter_building()
-                    elif event.key == py.K_e and self.office.able_to_enter and self.stickman.rect.colliderect(self.office.entry_rect):
-                        self.office.enter_building()
-                    elif event.key == py.K_e and self.castle.able_to_enter and self.stickman.rect.colliderect(self.castle.entry_rect):
-                        self.castle.enter_building()
-                    elif event.key == py.K_e and self.drug_store.able_to_enter and self.stickman.rect.colliderect(self.drug_store.entry_rect):
-                        self.drug_store.enter_building()
-                    elif event.key == py.K_e and self.weapon_shop.able_to_enter and self.stickman.rect.colliderect(self.weapon_shop.entry_rect):
-                        self.weapon_shop.enter_building()
-                    elif event.key == py.K_e and self.bank.able_to_enter and self.stickman.rect.colliderect(self.bank.entry_rect):
-                        self.bank.enter_building()
-                    elif event.key == py.K_e and self.game_end_bar.able_to_enter and self.stickman.level >= 30 and self.stickman.rect.colliderect(self.game_end_bar.entry_rect):
-                        self.game_end_bar.enter_building()
-                    elif event.key == py.K_e and self.casino.able_to_enter and self.stickman.rect.colliderect(self.casino.entry_rect) and self.stickman.level >= 10:
-                        self.casino.enter_building()
+                elif event.key == py.K_e:
+                    for building in self.buildings:
+                        if building.able_to_enter and self.stickman.rect.colliderect(building.entry_rect):
+                            if hasattr(building, 'required_level') and self.stickman.level < building.required_level:
+                                continue
+                            building.enter_building()
+                            break
+
     def update(self):
         """
         Updates the game state. If the player is not inside any building, it updates
         the player's state and controls time flow. It also checks certain conditions
         in the game, such as those related to the hospital.
         """
-        if not (self.home.entered or self.university.entered or self.mcd.entered or self.hospital.entered or self.office.entered
-                or self.castle.entered or self.drug_store.entered or self.weapon_shop.entered or self.bank.entered or self.game_end_bar.entered or self.casino.entered):
+        if not any(building.entered for building in self.buildings):
             self.stickman.handle_keys()
-        if not self.castle.entered or not self.casino.entered:
+        if not any(building.entered for building in [self.castle, self.casino]):
             self.stickman.control_time_flow()
             self.hospital.check_conditions()
 
@@ -145,9 +125,7 @@ class Game:
         a specific building. It also handles camera movement and UI elements such as
         experience bars and health points.
         """
-        if not (self.home.entered or self.university.entered or self.mcd.entered or self.hospital.entered
-                or self.office.entered or self.castle.entered or self.drug_store.entered or self.weapon_shop.entered
-        or self.bank.entered or self.game_end_bar.entered or self.casino.entered):
+        if not any(building.entered for building in self.buildings):
             # Determine camera position
             camera_x = max(0, min(self.stickman.rect.centerx - self.window_size[0] // 2, self.map_size[0] - self.window_size[0]))
             camera_y = max(0, min(self.stickman.rect.centery - self.window_size[1] // 2, self.map_size[1] - self.window_size[1]))
@@ -161,51 +139,15 @@ class Game:
             self.stickman.draw_properties()
 
             # Check if the player is near the entrance of any building
-            if self.stickman.rect.colliderect(self.home.entry_rect):
-                self.home.draw_enter_message()
-            elif self.stickman.rect.colliderect(self.university.entry_rect):
-                self.university.draw_enter_message()
-            elif self.stickman.rect.colliderect(self.mcd.entry_rect):
-                self.mcd.draw_enter_message()
-            elif self.stickman.rect.colliderect(self.hospital.entry_rect):
-                self.hospital.draw_enter_message()
-            elif self.stickman.rect.colliderect(self.office.entry_rect):
-                self.office.draw_enter_message()
-            elif self.stickman.rect.colliderect(self.castle.entry_rect):
-                self.castle.draw_enter_message()
-            elif self.stickman.rect.colliderect(self.drug_store.entry_rect):
-                self.drug_store.draw_enter_message()
-            elif self.stickman.rect.colliderect(self.weapon_shop.entry_rect):
-                self.weapon_shop.draw_enter_message()
-            elif self.stickman.rect.colliderect(self.bank.entry_rect):
-                self.bank.draw_enter_message()
-            elif self.stickman.rect.colliderect(self.game_end_bar.entry_rect):
-                self.game_end_bar.draw_enter_message()
-            elif self.stickman.rect.colliderect(self.casino.entry_rect):
-                self.casino.draw_enter_message()
-
-        elif self.home.entered:
-            self.home.update()
-        elif self.university.entered:
-            self.university.update()
-        elif self.mcd.entered:
-            self.mcd.update()
-        elif self.hospital.entered:
-            self.hospital.update()
-        elif self.office.entered:
-            self.office.update()
-        elif self.castle.entered:
-            self.castle.update()
-        elif self.drug_store.entered:
-            self.drug_store.update()
-        elif self.weapon_shop.entered:
-            self.weapon_shop.update()
-        elif self.bank.entered:
-            self.bank.update()
-        elif self.game_end_bar.entered:
-            self.game_end_bar.update()
-        elif self.casino.entered:
-            self.casino.update()
+            for building in self.buildings:
+                if self.stickman.rect.colliderect(building.entry_rect):
+                    building.draw_enter_message()
+                    break
+        else:
+            for building in self.buildings:
+                if building.entered:
+                    building.update()
+                    break
 
         py.display.flip()
 
