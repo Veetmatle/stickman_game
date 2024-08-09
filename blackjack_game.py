@@ -9,7 +9,7 @@ class BlackjackGame:
     def __init__(self, window_size):
         self.window_size = window_size
 
-        # Ładowanie obrazów kart
+        # Load card images
         self.icon = py.image.load('resources/icon.png')
         self.cBack = py.image.load('resources/cards/cardback.png')
         self.diamondA = py.image.load('resources/cards/ad.png')
@@ -65,16 +65,16 @@ class BlackjackGame:
         self.heartK = py.image.load('resources/cards/kh.png')
         self.spadeK = py.image.load('resources/cards/ks.png')
 
-        # Ustaw ikonę
+        # Set icon
         py.display.set_icon(self.icon)
 
-        # Stałe globalne
+        # Colors and background settings
         self.black = (0, 0, 0)
         self.white = (255, 255, 255)
         self.gray = (192, 192, 192)
-        self.background_color = (20, 140, 40)  # Zmiana koloru tła na ciemniejszy zielony
+        self.background_color = (20, 140, 40)
 
-        # Lista kart
+        # Card lists
         self.cards = [self.diamondA, self.clubA, self.heartA, self.spadeA,
                       self.diamond2, self.club2, self.heart2, self.spade2,
                       self.diamond3, self.club3, self.heart3, self.spade3,
@@ -104,7 +104,7 @@ class BlackjackGame:
                        self.diamondK, self.clubK, self.heartK, self.spadeK]
 
     def get_amt(self, card):
-        """Zwraca wartość karty."""
+        """Returns the value of a card."""
         if card in self.cardA:
             return 11
         elif card in self.card2:
@@ -126,18 +126,24 @@ class BlackjackGame:
         elif card in self.card10:
             return 10
         else:
-            print('get_amt broke')
+            print('get_amt error')
             exit()
 
     def gen_card(self, c_list, x_list):
-        """Generuje kartę z c_list, usuwa ją z c_list i dodaje do x_list. Zwraca, czy karta to as i samą kartę."""
+        """
+        Generates a card from c_list, removes it from c_list, and adds it to x_list.
+        Returns whether the card is an Ace and the card itself.
+        """
         card = random.choice(c_list)
         c_list.remove(card)
         x_list.append(card)
         return card, (1 if card in self.cardA else 0)
 
     def init_game(self, c_list, u_list, d_list):
-        """Generuje po dwie karty dla dealera i użytkownika, po jednej na zmianę dla każdego. Zwraca, czy karta to as i sumę kart dla każdej osoby."""
+        """
+        Generates two cards each for the dealer and the player, alternating between them.
+        Returns whether each card is an Ace and the total value of cards for each person.
+        """
         userA, dealA = 0, 0
         card1, cA = self.gen_card(c_list, u_list)
         userA += cA
@@ -150,32 +156,29 @@ class BlackjackGame:
         return self.get_amt(card1) + self.get_amt(card3), userA, self.get_amt(card2) + self.get_amt(card4), dealA
 
     def display_points(self, screen, font, user_sum, deal_sum, deal_cards):
-        """Wyświetla aktualne punkty gracza i dealera."""
+        """Displays the current points of the player and the dealer."""
         user_points_text = font.render(f'Your points: {user_sum}', True, self.black)
         dealer_points_text = font.render(f'Dealer points: {deal_sum}', True, self.black)
 
-        screen.blit(user_points_text, (10, self.window_size[1] - 120))  # Przesunięte wyżej
+        screen.blit(user_points_text, (10, self.window_size[1] - 120))
 
         if deal_cards:
-            dealer_x_position = 10 + len(deal_cards) * 110 + 20  # Przesunięcie na prawo od kart
-            screen.blit(dealer_points_text, (dealer_x_position, 30))  # Umieszczone wyżej, aby wyrównać z kartami
+            dealer_x_position = 10 + len(deal_cards) * 110 + 20
+            screen.blit(dealer_points_text, (dealer_x_position, 30))
 
     def display_end_message(self, screen, result):
-        """Wyświetla wiadomość o wyniku gry."""
+        """Displays the end-of-game message."""
         message = "You won!" if result == 'win' else "You lost!"
         font = py.font.SysFont('arial', 48, bold=True)
         end_text = font.render(message, True, self.white)
 
-        # Ustal położenie tekstu na środku ekranu
         text_rect = end_text.get_rect(center=(self.window_size[0] // 2, self.window_size[1] // 2))
         screen.blit(end_text, text_rect)
         py.display.flip()
-
-        # Poczekaj 2 sekundy przed zamknięciem okna gry
         time.sleep(2)
 
     def play(self, stake, stickman):
-        """Rozgrywa rundę w blackjacka."""
+        """Plays a round of Blackjack."""
         ccards = copy.copy(self.cards)
         stand = False
         user_card = []
@@ -222,7 +225,6 @@ class BlackjackGame:
                         gameover = True
 
             if user_sum > 21:
-                # Odsłonięcie kart dealera i wyświetlenie wyniku
                 screen.blit(background, (0, 0))
                 self.display_points(screen, font, user_sum, deal_sum, deal_card)
                 for card in deal_card:
@@ -232,7 +234,6 @@ class BlackjackGame:
                 self.display_end_message(screen, 'lose')
                 return 'lose'
             elif stand:
-                # Odsłonięcie kart dealera i wyświetlenie wyniku
                 screen.blit(background, (0, 0))
                 self.display_points(screen, font, user_sum, deal_sum, deal_card)
                 for card in deal_card:
@@ -255,7 +256,7 @@ class BlackjackGame:
                 screen.blit(card, (x, 295))
 
             if not stand and not gameover:
-                screen.blit(self.cBack, (120, 10))  # Zakryta karta dealera
+                screen.blit(self.cBack, (120, 10))
 
             self.display_points(screen, font, user_sum, deal_sum, deal_card)
 
@@ -263,7 +264,7 @@ class BlackjackGame:
 
     def prompt_for_stake(self, max_stake):
         """
-        Prompt the player to enter a stake amount using a simple input dialog in Pygame.
+        Prompts the player to enter a stake amount.
         Shows the maximum possible stake.
         Returns the stake amount entered by the player or None if invalid.
         """
